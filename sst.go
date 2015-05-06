@@ -62,10 +62,25 @@ func GetProjects(token string) []Project {
 	return projects
 }
 
+// Draws a project tree
+func DrawProjectTree(p Project) {
+	fmt.Printf("┌─ %s\n", p.Name)
+
+	for index, b := range p.Branches {
+		if index < len(p.Branches)-1 {
+			fmt.Printf("├── %s\n", b.Name)
+		} else {
+			fmt.Printf("└── %s\n\n", b.Name)
+		}
+	}
+}
+
 func main() {
 	token := LoadToken()
 
 	projects := GetProjects(token)
 
-	fmt.Printf("%v", projects)
+	for _, p := range projects {
+		DrawProjectTree(p)
+	}
 }
