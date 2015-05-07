@@ -10,7 +10,8 @@ import (
 )
 
 type Branch struct {
-	Name string `json:"branch_name"`
+	Name   string `json:"branch_name"`
+	Result string
 }
 
 type Project struct {
@@ -62,17 +63,41 @@ func GetProjects(token string) []Project {
 	return projects
 }
 
+func BranchColor(b Branch) string {
+	switch b.Result {
+	case "passed":
+		return "\033[32m" // green
+	case "failed", "stopped":
+		return "\033[31m" // red
+	case "pending":
+		return "\033[33m" // blue
+	default:
+		return "\033[34m" // yellow
+	}
+}
+
 // Draws a project tree
 func DrawProjectTree(p Project) {
 	fmt.Printf("┌─ %s\n", p.Name)
 
 	for index, b := range p.Branches {
-		if index < len(p.Branches)-1 {
-			fmt.Printf("├── %s\n", b.Name)
-		} else {
-			fmt.Printf("└── %s\n\n", b.Name)
+		tree_element := "├──"
+		color := BranchColor(b)
+
+		if index == len(p.Branches)-1 {
+			tree_element = "└──"
 		}
+
+		result := b.Result
+
+		if result == "" {
+			result = "unknown"
+		}
+
+		fmt.Printf("%s %s%s\033[0m :: %s\n", tree_element, color, result, b.Name)
 	}
+
+	fmt.Printf("\n")
 }
 
 func main() {
