@@ -23,7 +23,9 @@ type Project struct {
 // this function displays the provided errorMessage and panics
 func check(e error, errorMessage string) {
 	if e != nil {
-		panic(errorMessage)
+		fmt.Printf("%s\n", errorMessage)
+
+		panic(e)
 	}
 }
 
@@ -40,11 +42,25 @@ func LoadToken() string {
 	return strings.TrimSpace(string(dat))
 }
 
+func LoadDomain() string {
+	user, err := user.Current()
+
+	check(err, "Can't load the current user")
+
+	domain, err := ioutil.ReadFile(fmt.Sprintf("%s/.sst/api_domain", user.HomeDir))
+
+	if err == nil {
+		return strings.TrimSpace(string(domain))
+	} else {
+		return "https://semaphoreci.com"
+	}
+}
+
 // Makes a GET request towards SemaphoreCI's API endpoint,
 // collects the projects that the user has can access.
 // The returned JSON is parsed into a suitable Go Structure.
-func GetProjects(token string) []Project {
-	response, err := http.Get(fmt.Sprintf("https://s3.semaphoreci.com/api/v1/projects?auth_token=%s", token))
+func GetProjects(domain, token string) []Project {
+	response, err := http.Get(fmt.Sprintf("%s/api/v1/projects?auth_token=%s", domain, token))
 
 	check(err, "Can't load the projects from Semaphore")
 
@@ -102,8 +118,9 @@ func DrawProjectTree(p Project) {
 
 func main() {
 	token := LoadToken()
+	domain := LoadDomain()
 
-	projects := GetProjects(token)
+	projects := GetProjects(domain, token)
 
 	for _, p := range projects {
 		DrawProjectTree(p)
