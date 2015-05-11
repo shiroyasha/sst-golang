@@ -31,6 +31,9 @@ func StartSshSession(source_job_hash_id string) {
 func RunSshCommand(command string) {
 	command_fields := strings.Fields(command)
 
+	pre_cmd := exec.Command(command_fields[0], append(command_fields[1:], "ls")...)
+	pre_cmd.Run()
+
 	cmd := exec.Command(command_fields[0], command_fields[1:]...)
 
 	cmd.Stdout = os.Stdout
@@ -38,6 +41,14 @@ func RunSshCommand(command string) {
 	cmd.Stderr = os.Stderr
 
 	cmd.Run()
+
+	poweroff_cmd := exec.Command(command_fields[0], append(command_fields[1:], "sudo", "poweroff")...)
+
+	poweroff_cmd.Stdout = os.Stdout
+	poweroff_cmd.Stdin = os.Stdin
+	poweroff_cmd.Stderr = os.Stderr
+
+	poweroff_cmd.Run()
 }
 
 func Ssh(branch Branch) {
