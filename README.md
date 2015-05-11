@@ -1,4 +1,4 @@
-# Semaphore CLI
+![Semaphore CLI](https://raw.githubusercontent.com/shiroyasha/sst-golang/master/logo.png)
 
 ## Installation
 
