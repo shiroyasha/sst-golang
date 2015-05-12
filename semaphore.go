@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func cli_ssh() {
+func cli_ssh(config *SemaphoreConfig) {
 	if len(os.Args) != 4 {
 		fmt.Printf("No project and branch options provided\n\n")
 
@@ -13,7 +13,7 @@ func cli_ssh() {
 		return
 	}
 
-	projects := GetProjects()
+	projects := GetProjects(config)
 
 	project_name := os.Args[2]
 	branch_name := os.Args[3]
@@ -26,11 +26,11 @@ func cli_ssh() {
 		fmt.Printf("Can't find branch named %s for project %s", branch_name, project_name)
 	} else {
 		fmt.Printf("Starting SSH session for %s on %s branch\n", p.Name, b.Name)
-		Ssh(*b)
+		Ssh(config, *b)
 	}
 }
 
-func cli_status() {
+func cli_status(config *SemaphoreConfig) {
 	if len(os.Args) != 2 {
 		fmt.Printf("Option <status> takes no arguments\n\n")
 
@@ -39,7 +39,7 @@ func cli_status() {
 		return
 	}
 
-	projects := GetProjects()
+	projects := GetProjects(config)
 
 	DrawProjects(projects)
 }
@@ -63,6 +63,12 @@ func cli_unrecognized() {
 }
 
 func main() {
+	config, err := LoadConfig()
+
+	if err != nil {
+		return
+	}
+
 	if len(os.Args) < 2 {
 		cli_noargs()
 		return
@@ -70,10 +76,10 @@ func main() {
 
 	switch os.Args[1] {
 	case "status":
-		cli_status()
+		cli_status(config)
 		break
 	case "ssh":
-		cli_ssh()
+		cli_ssh(config)
 		break
 	case "help":
 		cli_help()

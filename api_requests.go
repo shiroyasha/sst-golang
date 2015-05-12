@@ -8,11 +8,8 @@ import (
 	"net/url"
 )
 
-func ApiPostRequest(path string, params map[string]string) ([]byte, error) {
-	token := LoadToken()
-	domain := LoadDomain()
-
-	key_value_pairs := "auth_token=" + token
+func ApiPostRequest(config *SemaphoreConfig, path string, params map[string]string) ([]byte, error) {
+	key_value_pairs := "auth_token=" + config.ApiToken
 
 	if params != nil {
 		for key, value := range params {
@@ -20,7 +17,7 @@ func ApiPostRequest(path string, params map[string]string) ([]byte, error) {
 		}
 	}
 
-	api_url := fmt.Sprintf("%s%s", domain, path)
+	api_url := fmt.Sprintf("%s%s", config.ApiDomain, path)
 
 	form_values, err := url.ParseQuery(key_value_pairs)
 
@@ -33,10 +30,7 @@ func ApiPostRequest(path string, params map[string]string) ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
-func ApiGetRequest(path string, params map[string]string) ([]byte, error) {
-	token := LoadToken()
-	domain := LoadDomain()
-
+func ApiGetRequest(config *SemaphoreConfig, path string, params map[string]string) ([]byte, error) {
 	key_value_pairs := ""
 
 	if params != nil {
@@ -45,7 +39,7 @@ func ApiGetRequest(path string, params map[string]string) ([]byte, error) {
 		}
 	}
 
-	url := fmt.Sprintf("%s%s?auth_token=%s%s", domain, path, token, key_value_pairs)
+	url := fmt.Sprintf("%s%s?auth_token=%s%s", config.ApiDomain, path, config.ApiToken, key_value_pairs)
 
 	response, err := http.Get(url)
 
@@ -56,8 +50,8 @@ func ApiGetRequest(path string, params map[string]string) ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
-func GetProjects() Projects {
-	content, err := ApiGetRequest("/api/v1/projects", nil)
+func GetProjects(config *SemaphoreConfig) Projects {
+	content, err := ApiGetRequest(config, "/api/v1/projects", nil)
 
 	check(err, "Can't load the projects from Semaphore")
 

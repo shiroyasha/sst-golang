@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-func LoadSourceJobHashId(build_url string) string {
-	page, err := ApiGetRequest(build_url, nil)
+func LoadSourceJobHashId(config *SemaphoreConfig, build_url string) string {
+	page, err := ApiGetRequest(config, build_url, nil)
 
 	check(err, "Can't load build page")
 
@@ -22,8 +22,8 @@ func LoadSourceJobHashId(build_url string) string {
 	return matches[len(matches)-1]
 }
 
-func StartSshSession(source_job_hash_id string) {
-	_, err := ApiPostRequest("/ssh_sessions", map[string]string{"job_hash_id": source_job_hash_id})
+func StartSshSession(config *SemaphoreConfig, source_job_hash_id string) {
+	_, err := ApiPostRequest(config, "/ssh_sessions", map[string]string{"job_hash_id": source_job_hash_id})
 
 	check(err, "Can't start ssh session")
 }
@@ -51,17 +51,17 @@ func RunSshCommand(command string) {
 	poweroff_cmd.Run()
 }
 
-func Ssh(branch Branch) {
+func Ssh(config *SemaphoreConfig, branch Branch) {
 	build_url, err := url.Parse(branch.BuildUrl)
 
 	check(err, "Can't load build url")
 
-	job := LoadSourceJobHashId(build_url.Path)
+	job := LoadSourceJobHashId(config, build_url.Path)
 
-	StartSshSession(job)
+	StartSshSession(config, job)
 
 	for i := 0; i < 30; i++ {
-		page, err := ApiGetRequest(build_url.Path, nil)
+		page, err := ApiGetRequest(config, build_url.Path, nil)
 
 		check(err, "Can't get ssh session's status")
 
