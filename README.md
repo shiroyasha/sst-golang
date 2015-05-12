@@ -2,14 +2,10 @@
 
 ## Installation
 
-Before installation:
+The following command will install Semaphore CLI to the `~/bin` directory.
 
 ``` bash
-mkdir -p ~/bin
-
-wget "https://github.com/shiroyasha/sst-golang/releases/download/0.1.1/semaphore" -O ~/bin/semaphore
-
-chmod +x ~/bin/semaphore
+curl -L "https://goo.gl/brnQfs" | sh
 ```
 
 Optionally append the following line to your `~/.bash_rc` or `~/.zshrc`:
