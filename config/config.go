@@ -13,23 +13,12 @@ type Config struct {
 	ApiDomain string
 }
 
-func config_folder_path() string {
-	user, err := user.Current()
-
-	if err != nil {
-		fmt.Println("Fatal error: Can't determine current user")
-		os.Exit(1)
-	}
-
-	return fmt.Sprintf("%s/.semaphore", user.HomeDir)
+func SaveToken(token string) {
+	write_to_config_file(api_token_path(), token)
 }
 
-func api_token_path() string {
-	return fmt.Sprintf("%s/api_token", config_folder_path())
-}
-
-func api_domain_path() string {
-	return fmt.Sprintf("%s/api_domain", config_folder_path())
+func SaveDomain(domain string) {
+	write_to_config_file(api_domain_path(), domain)
 }
 
 func Load() (*Config, error) {
@@ -51,6 +40,25 @@ func Load() (*Config, error) {
 	}
 
 	return config, nil
+}
+
+func config_folder_path() string {
+	user, err := user.Current()
+
+	if err != nil {
+		fmt.Println("Fatal error: Can't determine current user")
+		os.Exit(1)
+	}
+
+	return fmt.Sprintf("%s/.semaphore", user.HomeDir)
+}
+
+func api_token_path() string {
+	return fmt.Sprintf("%s/api_token", config_folder_path())
+}
+
+func api_domain_path() string {
+	return fmt.Sprintf("%s/api_domain", config_folder_path())
 }
 
 func write_to_config_file(path, content string) {
@@ -79,12 +87,4 @@ func write_to_config_file(path, content string) {
 	}
 
 	f.Sync()
-}
-
-func SaveToken(token string) {
-	write_to_config_file(api_token_path(), token)
-}
-
-func SaveDomain(domain string) {
-	write_to_config_file(api_domain_path(), domain)
 }

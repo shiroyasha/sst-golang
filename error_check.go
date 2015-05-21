@@ -1,11 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func check(e error, errorMessage string) {
 	if e != nil {
 		fmt.Printf("%s\n", errorMessage)
 
-		panic(e)
+		os.Exit(1)
 	}
 }
