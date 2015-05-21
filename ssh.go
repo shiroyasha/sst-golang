@@ -8,9 +8,11 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/shiroyasha/semaphore/config"
 )
 
-func LoadSourceJobHashId(config *SemaphoreConfig, build_url string) string {
+func LoadSourceJobHashId(config *config.Config, build_url string) string {
 	page, err := ApiGetRequest(config, build_url, nil)
 
 	check(err, "Can't load build page")
@@ -22,7 +24,7 @@ func LoadSourceJobHashId(config *SemaphoreConfig, build_url string) string {
 	return matches[len(matches)-1]
 }
 
-func StartSshSession(config *SemaphoreConfig, source_job_hash_id string) {
+func StartSshSession(config *config.Config, source_job_hash_id string) {
 	_, err := ApiPostRequest(config, "/ssh_sessions", map[string]string{"job_hash_id": source_job_hash_id})
 
 	check(err, "Can't start ssh session")
@@ -51,7 +53,7 @@ func RunSshCommand(command string) {
 	poweroff_cmd.Run()
 }
 
-func Ssh(config *SemaphoreConfig, branch Branch) {
+func Ssh(config *config.Config, branch Branch) {
 	build_url, err := url.Parse(branch.BuildUrl)
 
 	check(err, "Can't load build url")

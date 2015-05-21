@@ -6,9 +6,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/shiroyasha/semaphore/config"
 )
 
-func ApiPostRequest(config *SemaphoreConfig, path string, params map[string]string) ([]byte, error) {
+func ApiPostRequest(config *config.Config, path string, params map[string]string) ([]byte, error) {
 	key_value_pairs := "auth_token=" + config.ApiToken
 
 	if params != nil {
@@ -30,7 +32,7 @@ func ApiPostRequest(config *SemaphoreConfig, path string, params map[string]stri
 	return ioutil.ReadAll(response.Body)
 }
 
-func ApiGetRequest(config *SemaphoreConfig, path string, params map[string]string) ([]byte, error) {
+func ApiGetRequest(config *config.Config, path string, params map[string]string) ([]byte, error) {
 	key_value_pairs := ""
 
 	if params != nil {
@@ -50,7 +52,7 @@ func ApiGetRequest(config *SemaphoreConfig, path string, params map[string]strin
 	return ioutil.ReadAll(response.Body)
 }
 
-func GetProjects(config *SemaphoreConfig) Projects {
+func GetProjects(config *config.Config) Projects {
 	content, err := ApiGetRequest(config, "/api/v1/projects", nil)
 
 	check(err, "Can't load the projects from Semaphore")
