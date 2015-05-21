@@ -40,8 +40,8 @@ func cli_usage() {
 
 	fmt.Printf("  semaphore status                            -- show the current status of your projects on Semaphore\n")
 	fmt.Printf("  semaphore ssh <project_name> <branch_name>  -- starts an SSH session for the provided project/branch\n")
-	fmt.Printf("  semaphore config api.token <api_token>      -- starts an SSH session for the provided project/branch\n")
-	fmt.Printf("  semaphore config api.domain <api_domain>    -- starts an SSH session for the provided project/branch\n")
+	fmt.Printf("  semaphore config api.token <api_token>      -- saves the api token to the configuration file\n")
+	fmt.Printf("  semaphore config api.domain <api_domain>    -- saves the api domain to the configuration file\n")
 	fmt.Printf("  semaphore help                              -- shows this message\n")
 
 	fmt.Println()
